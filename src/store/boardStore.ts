@@ -72,8 +72,9 @@ export const useBoardStore = create<BoardState & BoardActions>((set) => ({
   deleteColumn: (boardId, columnId) =>
     set((state) => {
       const { cardIds } = state.columns[columnId];
+      const cardIdsSet = new Set(cardIds);
       return {
-        cards: Object.fromEntries(Object.entries(state.cards).filter(([id]) => !cardIds.includes(id))),
+        cards: Object.fromEntries(Object.entries(state.cards).filter(([id]) => !cardIdsSet.has(id))),
         columns: Object.fromEntries(Object.entries(state.columns).filter(([id]) => id !== columnId)),
         boards: {
           ...state.boards,
