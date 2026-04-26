@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { Card as CardType } from '@/types';
 
 interface Props {
@@ -13,6 +13,13 @@ export default function Card({ card, onDelete, onEdit }: Props) {
   const [isEditing, setIsEditing] = useState(false);
   const [editTitle, setEditTitle] = useState(card.title);
   const [editDescription, setEditDescription] = useState(card.description);
+
+  useEffect(() => {
+    if (!isEditing) {
+      setEditTitle(card.title);
+      setEditDescription(card.description);
+    }
+  }, [card.title, card.description, isEditing]);
 
   const handleSave = () => {
     const trimmed = editTitle.trim();
