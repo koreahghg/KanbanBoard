@@ -69,7 +69,8 @@ export default function Card({ card, onDelete, onEdit }: Props) {
         <div className="flex gap-2">
           <button
             onClick={handleSave}
-            className="flex-1 rounded-lg bg-sky-600 py-1.5 text-sm font-medium text-white hover:bg-sky-700"
+            disabled={!editTitle.trim()}
+            className="flex-1 rounded-lg bg-sky-600 py-1.5 text-sm font-medium text-white hover:bg-sky-700 disabled:cursor-not-allowed disabled:opacity-40"
           >
             저장
           </button>
