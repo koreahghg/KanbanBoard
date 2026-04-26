@@ -40,29 +40,29 @@ export default function Card({ card, onDelete, onEdit }: Props) {
           value={editTitle}
           onChange={(e) => setEditTitle(e.target.value)}
           onKeyDown={handleKeyDown}
-          className="w-full rounded border border-neutral-300 px-2 py-1 text-sm focus:border-blue-400 focus:outline-none"
           placeholder="카드 제목"
           aria-label="카드 제목 수정"
+          className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-200"
         />
         <textarea
           value={editDescription}
           onChange={(e) => setEditDescription(e.target.value)}
           onKeyDown={handleKeyDown}
-          className="w-full resize-none rounded border border-neutral-300 px-2 py-1 text-sm focus:border-blue-400 focus:outline-none"
           placeholder="설명 (선택)"
           rows={3}
           aria-label="카드 설명 수정"
+          className="resize-none rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-200"
         />
-        <div className="flex gap-1">
+        <div className="flex gap-2">
           <button
             onClick={handleSave}
-            className="rounded bg-blue-500 px-3 py-1 text-sm text-white transition-colors hover:bg-blue-600"
+            className="flex-1 rounded-lg bg-sky-600 py-1.5 text-sm font-medium text-white hover:bg-sky-700"
           >
             저장
           </button>
           <button
             onClick={handleCancel}
-            className="rounded px-3 py-1 text-sm text-neutral-600 transition-colors hover:bg-neutral-200"
+            className="flex-1 rounded-lg bg-neutral-200 py-1.5 text-sm font-medium text-gray-700 hover:bg-neutral-300"
           >
             취소
           </button>

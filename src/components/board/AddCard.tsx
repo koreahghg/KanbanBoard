@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 interface Props {
   onAdd: (title: string) => void;
@@ -9,6 +9,11 @@ interface Props {
 export default function AddCard({ onAdd }: Props) {
   const [isEditing, setIsEditing] = useState(false);
   const [title, setTitle] = useState('');
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (isEditing) inputRef.current?.focus();
+  }, [isEditing]);
 
   const handleSubmit = () => {
     const trimmed = title.trim();
@@ -17,7 +22,7 @@ export default function AddCard({ onAdd }: Props) {
     setIsEditing(false);
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') handleSubmit();
     if (e.key === 'Escape') {
       setTitle('');
@@ -39,33 +44,28 @@ export default function AddCard({ onAdd }: Props) {
   return (
     <div className="flex flex-col gap-2">
       <input
-        autoFocus
+        ref={inputRef}
         type="text"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
         onKeyDown={handleKeyDown}
-        onBlur={handleSubmit}
         placeholder="카드 제목 입력..."
-        className="w-full rounded border border-neutral-300 bg-white px-2 py-1.5 text-sm focus:border-blue-400 focus:outline-none"
         aria-label="카드 제목"
+        className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-200"
       />
-      <div className="flex gap-1">
+      <div className="flex gap-2">
         <button
-          onMouseDown={(e) => {
-            e.preventDefault();
-            handleSubmit();
-          }}
-          className="rounded bg-blue-500 px-3 py-1 text-sm text-white transition-colors hover:bg-blue-600"
+          onClick={handleSubmit}
+          className="flex-1 rounded-lg bg-sky-600 py-1.5 text-sm font-medium text-white hover:bg-sky-700"
         >
           추가
         </button>
         <button
-          onMouseDown={(e) => {
-            e.preventDefault();
+          onClick={() => {
             setTitle('');
             setIsEditing(false);
           }}
-          className="rounded px-3 py-1 text-sm text-neutral-600 transition-colors hover:bg-neutral-200"
+          className="flex-1 rounded-lg bg-neutral-200 py-1.5 text-sm font-medium text-gray-700 hover:bg-neutral-300"
         >
           취소
         </button>
