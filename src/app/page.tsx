@@ -4,7 +4,10 @@ import Column from '@/components/board/Column';
 import { useBoardStore } from '@/store/boardStore';
 
 export default function BoardPage() {
-  const { boards, columns, cards, activeBoardId } = useBoardStore();
+  const activeBoardId = useBoardStore((state) => state.activeBoardId);
+  const boards = useBoardStore((state) => state.boards);
+  const columns = useBoardStore((state) => state.columns);
+  const cards = useBoardStore((state) => state.cards);
   const activeBoard = activeBoardId ? boards[activeBoardId] : null;
 
   if (!activeBoard) return null;
