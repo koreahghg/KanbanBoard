@@ -87,7 +87,13 @@ export default function Card({ card, onDelete, onEdit }: Props) {
 
   return (
     <div className="group relative rounded-md bg-white px-3 py-2 shadow-sm transition-shadow hover:shadow-md">
-      <div className="cursor-pointer" onClick={() => setIsEditing(true)}>
+      <div
+        role="button"
+        tabIndex={0}
+        className="cursor-pointer rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-400"
+        onClick={() => setIsEditing(true)}
+        onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && setIsEditing(true)}
+      >
         <p className="pr-5 text-sm font-medium text-gray-800">{card.title}</p>
         {card.description && (
           <p className="mt-1 text-xs text-gray-500">{card.description}</p>
