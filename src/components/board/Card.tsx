@@ -1,16 +1,104 @@
+'use client';
+
+import { useState } from 'react';
 import type { Card as CardType } from '@/types';
 
 interface Props {
   card: CardType;
+  onDelete: () => void;
+  onEdit: (title: string, description: string) => void;
 }
 
-export default function Card({ card }: Props) {
+export default function Card({ card, onDelete, onEdit }: Props) {
+  const [isEditing, setIsEditing] = useState(false);
+  const [editTitle, setEditTitle] = useState(card.title);
+  const [editDescription, setEditDescription] = useState(card.description);
+
+  const handleSave = () => {
+    const trimmed = editTitle.trim();
+    if (!trimmed) return;
+    onEdit(trimmed, editDescription.trim());
+    setIsEditing(false);
+  };
+
+  const handleCancel = () => {
+    setEditTitle(card.title);
+    setEditDescription(card.description);
+    setIsEditing(false);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Escape') handleCancel();
+    if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) handleSave();
+  };
+
+  if (isEditing) {
+    return (
+      <div className="flex flex-col gap-2 rounded-md bg-white p-3 shadow-sm">
+        <input
+          autoFocus
+          value={editTitle}
+          onChange={(e) => setEditTitle(e.target.value)}
+          onKeyDown={handleKeyDown}
+          className="w-full rounded border border-neutral-300 px-2 py-1 text-sm focus:border-blue-400 focus:outline-none"
+          placeholder="카드 제목"
+          aria-label="카드 제목 수정"
+        />
+        <textarea
+          value={editDescription}
+          onChange={(e) => setEditDescription(e.target.value)}
+          onKeyDown={handleKeyDown}
+          className="w-full resize-none rounded border border-neutral-300 px-2 py-1 text-sm focus:border-blue-400 focus:outline-none"
+          placeholder="설명 (선택)"
+          rows={3}
+          aria-label="카드 설명 수정"
+        />
+        <div className="flex gap-1">
+          <button
+            onClick={handleSave}
+            className="rounded bg-blue-500 px-3 py-1 text-sm text-white transition-colors hover:bg-blue-600"
+          >
+            저장
+          </button>
+          <button
+            onClick={handleCancel}
+            className="rounded px-3 py-1 text-sm text-neutral-600 transition-colors hover:bg-neutral-200"
+          >
+            취소
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="rounded-md bg-white px-3 py-2 shadow-sm">
-      <p className="text-sm font-medium text-gray-800">{card.title}</p>
-      {card.description && (
-        <p className="mt-1 text-xs text-gray-500">{card.description}</p>
-      )}
+    <div className="group relative rounded-md bg-white px-3 py-2 shadow-sm transition-shadow hover:shadow-md">
+      <div className="cursor-pointer" onClick={() => setIsEditing(true)}>
+        <p className="pr-5 text-sm font-medium text-gray-800">{card.title}</p>
+        {card.description && (
+          <p className="mt-1 text-xs text-gray-500">{card.description}</p>
+        )}
+      </div>
+      <button
+        onClick={onDelete}
+        className="absolute right-2 top-2 rounded p-0.5 text-gray-400 opacity-0 transition-opacity hover:text-red-500 group-hover:opacity-100"
+        aria-label="카드 삭제"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="12"
+          height="12"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <line x1="18" y1="6" x2="6" y2="18" />
+          <line x1="6" y1="6" x2="18" y2="18" />
+        </svg>
+      </button>
     </div>
   );
 }
