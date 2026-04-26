@@ -1,4 +1,4 @@
-import type { Board, Card, List } from '@/types';
+import type { Board, Card, Column } from '@/types';
 
 export const cards: Record<string, Card> = {
   'card-1': {
@@ -38,12 +38,14 @@ export const cards: Record<string, Card> = {
   },
 };
 
-export const lists: Record<string, List> = {
-  'list-1': { id: 'list-1', title: 'To Do', cardIds: ['card-1', 'card-2', 'card-3'] },
-  'list-2': { id: 'list-2', title: 'In Progress', cardIds: ['card-4', 'card-5'] },
-  'list-3': { id: 'list-3', title: 'Done', cardIds: ['card-6', 'card-7'] },
+export const columns: Record<string, Column> = {
+  'col-1': { id: 'col-1', title: 'To Do', cardIds: ['card-1', 'card-2', 'card-3'] },
+  'col-2': { id: 'col-2', title: 'In Progress', cardIds: ['card-4', 'card-5'] },
+  'col-3': { id: 'col-3', title: 'Done', cardIds: ['card-6', 'card-7'] },
 };
 
 export const board: Board = {
-  listIds: ['list-1', 'list-2', 'list-3'],
+  id: 'board-1',
+  title: 'My Board',
+  columnIds: ['col-1', 'col-2', 'col-3'],
 };
