@@ -1,5 +1,6 @@
 export type CardId = string;
-export type ListId = string;
+export type ColumnId = string;
+export type BoardId = string;
 
 export interface Card {
   id: CardId;
@@ -7,12 +8,21 @@ export interface Card {
   description: string;
 }
 
-export interface List {
-  id: ListId;
+export interface Column {
+  id: ColumnId;
   title: string;
   cardIds: CardId[];
 }
 
 export interface Board {
-  listIds: ListId[];
+  id: BoardId;
+  title: string;
+  columnIds: ColumnId[];
+}
+
+export interface BoardState {
+  boards: Record<BoardId, Board>;
+  columns: Record<ColumnId, Column>;
+  cards: Record<CardId, Card>;
+  activeBoardId: BoardId | null;
 }
