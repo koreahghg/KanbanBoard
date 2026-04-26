@@ -1,4 +1,8 @@
+'use client';
+
 import type { Card as CardType, Column as ColumnType } from '@/types';
+import { useBoardStore } from '@/store/boardStore';
+import AddCard from './AddCard';
 import Card from './Card';
 
 interface Props {
@@ -8,6 +12,10 @@ interface Props {
 }
 
 export default function Column({ column, cards, onDelete }: Props) {
+  const addCard = useBoardStore((state) => state.addCard);
+  const updateCard = useBoardStore((state) => state.updateCard);
+  const deleteCard = useBoardStore((state) => state.deleteCard);
+
   return (
     <div className="flex w-72 shrink-0 flex-col rounded-xl bg-neutral-100/90 p-2">
       <div className="mb-2 flex items-center gap-2 px-1">
@@ -21,7 +29,17 @@ export default function Column({ column, cards, onDelete }: Props) {
             className="ml-1 rounded p-0.5 text-gray-400 hover:bg-neutral-200 hover:text-red-500"
             aria-label="컬럼 삭제"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
               <line x1="18" y1="6" x2="6" y2="18" />
               <line x1="6" y1="6" x2="18" y2="18" />
             </svg>
@@ -30,8 +48,16 @@ export default function Column({ column, cards, onDelete }: Props) {
       </div>
       <div className="flex flex-col gap-2">
         {cards.map((card) => (
-          <Card key={card.id} card={card} />
+          <Card
+            key={card.id}
+            card={card}
+            onDelete={() => deleteCard(column.id, card.id)}
+            onEdit={(title, description) => updateCard(card.id, { title, description })}
+          />
         ))}
+      </div>
+      <div className="mt-2">
+        <AddCard onAdd={(title) => addCard(column.id, title)} />
       </div>
     </div>
   );
