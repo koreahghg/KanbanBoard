@@ -1,5 +1,6 @@
 'use client';
 
+import AddColumn from '@/components/board/AddColumn';
 import Column from '@/components/board/Column';
 import { useBoardStore } from '@/store/boardStore';
 
@@ -8,9 +9,11 @@ export default function BoardPage() {
   const boards = useBoardStore((state) => state.boards);
   const columns = useBoardStore((state) => state.columns);
   const cards = useBoardStore((state) => state.cards);
+  const addColumn = useBoardStore((state) => state.addColumn);
+  const deleteColumn = useBoardStore((state) => state.deleteColumn);
   const activeBoard = activeBoardId ? boards[activeBoardId] : null;
 
-  if (!activeBoard) return null;
+  if (!activeBoard || !activeBoardId) return null;
 
   return (
     <main className="flex h-full flex-col p-4">
@@ -19,8 +22,16 @@ export default function BoardPage() {
         {activeBoard.columnIds.map((columnId) => {
           const column = columns[columnId];
           const columnCards = column.cardIds.map((cardId) => cards[cardId]);
-          return <Column key={columnId} column={column} cards={columnCards} />;
+          return (
+            <Column
+              key={columnId}
+              column={column}
+              cards={columnCards}
+              onDelete={() => deleteColumn(activeBoardId, columnId)}
+            />
+          );
         })}
+        <AddColumn onAdd={(title) => addColumn(activeBoardId, title)} />
       </div>
     </main>
   );
