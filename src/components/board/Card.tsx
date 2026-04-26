@@ -36,7 +36,13 @@ export default function Card({ card, onDelete, onEdit }: Props) {
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Escape') handleCancel();
-    if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) handleSave();
+    if (e.key === 'Enter') {
+      const isTextArea = (e.target as HTMLElement).tagName === 'TEXTAREA';
+      if (!isTextArea || e.metaKey || e.ctrlKey) {
+        e.preventDefault();
+        handleSave();
+      }
+    }
   };
 
   if (isEditing) {
