@@ -51,7 +51,7 @@ export default function Column({ column, cards, onDelete }: Props) {
         )}
       </div>
       <SortableContext items={cards.map((c) => c.id)} strategy={verticalListSortingStrategy}>
-        <div ref={setNodeRef} className="flex min-h-2 flex-col gap-2">
+        <div ref={setNodeRef} className="flex min-h-25 flex-1 flex-col gap-2">
           {cards.map((card) => (
             <Card
               key={card.id}
