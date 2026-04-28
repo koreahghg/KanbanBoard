@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import type { Card as CardType } from '@/types';
+import { useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 
 interface Props {
   card: CardType;
@@ -13,6 +15,16 @@ export default function Card({ card, onDelete, onEdit }: Props) {
   const [isEditing, setIsEditing] = useState(false);
   const [editTitle, setEditTitle] = useState(card.title);
   const [editDescription, setEditDescription] = useState(card.description);
+
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id: card.id,
+    disabled: isEditing,
+  });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
 
   useEffect(() => {
     if (!isEditing) {
@@ -47,7 +59,7 @@ export default function Card({ card, onDelete, onEdit }: Props) {
 
   if (isEditing) {
     return (
-      <div className="flex flex-col gap-2 rounded-md bg-white p-3 shadow-sm">
+      <div ref={setNodeRef} style={style} className="flex flex-col gap-2 rounded-md bg-white p-3 shadow-sm">
         <input
           autoFocus
           value={editTitle}
@@ -86,21 +98,25 @@ export default function Card({ card, onDelete, onEdit }: Props) {
   }
 
   return (
-    <div className="group relative rounded-md bg-white px-3 py-2 shadow-sm transition-shadow hover:shadow-md">
-      <div
-        role="button"
-        tabIndex={0}
-        className="cursor-pointer rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-400"
-        onClick={() => setIsEditing(true)}
-        onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && setIsEditing(true)}
-      >
-        <p className="pr-5 text-sm font-medium text-gray-800">{card.title}</p>
-        {card.description && (
-          <p className="mt-1 text-xs text-gray-500">{card.description}</p>
-        )}
-      </div>
+    <div
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      {...listeners}
+      onClick={() => setIsEditing(true)}
+      className={`group relative cursor-grab rounded-md bg-white px-3 py-2 shadow-sm transition-shadow active:cursor-grabbing ${
+        isDragging ? 'opacity-0' : 'hover:shadow-md'
+      }`}
+    >
+      <p className="select-none pr-5 text-sm font-medium text-gray-800">{card.title}</p>
+      {card.description && (
+        <p className="mt-1 select-none text-xs text-gray-500">{card.description}</p>
+      )}
       <button
-        onClick={onDelete}
+        onClick={(e) => {
+          e.stopPropagation();
+          onDelete();
+        }}
         className="absolute right-2 top-2 rounded p-0.5 text-gray-400 opacity-0 transition-opacity hover:text-red-500 group-hover:opacity-100"
         aria-label="카드 삭제"
       >
