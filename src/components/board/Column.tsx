@@ -2,6 +2,8 @@
 
 import type { Card as CardType, Column as ColumnType } from '@/types';
 import { useBoardStore } from '@/store/boardStore';
+import { useDroppable } from '@dnd-kit/core';
+import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import AddCard from './AddCard';
 import Card from './Card';
 
@@ -15,6 +17,8 @@ export default function Column({ column, cards, onDelete }: Props) {
   const addCard = useBoardStore((state) => state.addCard);
   const updateCard = useBoardStore((state) => state.updateCard);
   const deleteCard = useBoardStore((state) => state.deleteCard);
+
+  const { setNodeRef } = useDroppable({ id: column.id });
 
   return (
     <div className="flex w-72 shrink-0 flex-col rounded-xl bg-neutral-100/90 p-2">
@@ -46,16 +50,18 @@ export default function Column({ column, cards, onDelete }: Props) {
           </button>
         )}
       </div>
-      <div className="flex flex-col gap-2">
-        {cards.map((card) => (
-          <Card
-            key={card.id}
-            card={card}
-            onDelete={() => deleteCard(column.id, card.id)}
-            onEdit={(title, description) => updateCard(card.id, { title, description })}
-          />
-        ))}
-      </div>
+      <SortableContext items={cards.map((c) => c.id)} strategy={verticalListSortingStrategy}>
+        <div ref={setNodeRef} className="flex min-h-2 flex-col gap-2">
+          {cards.map((card) => (
+            <Card
+              key={card.id}
+              card={card}
+              onDelete={() => deleteCard(column.id, card.id)}
+              onEdit={(title, description) => updateCard(card.id, { title, description })}
+            />
+          ))}
+        </div>
+      </SortableContext>
       <div className="mt-2">
         <AddCard onAdd={(title) => addCard(column.id, title)} />
       </div>
