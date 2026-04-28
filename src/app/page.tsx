@@ -12,6 +12,7 @@ import {
   useSensors,
 } from '@dnd-kit/core';
 import AddColumn from '@/components/board/AddColumn';
+import CardContent from '@/components/board/CardContent';
 import Column from '@/components/board/Column';
 import { useBoardStore } from '@/store/boardStore';
 
@@ -88,10 +89,7 @@ export default function BoardPage() {
         <DragOverlay>
           {activeCard ? (
             <div className="w-64 rotate-1 cursor-grabbing rounded-md bg-white px-3 py-2 shadow-xl ring-2 ring-sky-400">
-              <p className="select-none pr-5 text-sm font-medium text-gray-800">{activeCard.title}</p>
-              {activeCard.description && (
-                <p className="mt-1 select-none text-xs text-gray-500">{activeCard.description}</p>
-              )}
+              <CardContent card={activeCard} />
             </div>
           ) : null}
         </DragOverlay>

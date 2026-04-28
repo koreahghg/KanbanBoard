@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import type { Card as CardType } from '@/types';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import CardContent from './CardContent';
 
 interface Props {
   card: CardType;
@@ -110,10 +111,7 @@ export default function Card({ card, columnId, onDelete, onEdit }: Props) {
         isDragging ? 'opacity-0' : 'hover:shadow-md'
       }`}
     >
-      <p className="select-none pr-5 text-sm font-medium text-gray-800">{card.title}</p>
-      {card.description && (
-        <p className="mt-1 select-none text-xs text-gray-500">{card.description}</p>
-      )}
+      <CardContent card={card} />
       <button
         onClick={(e) => {
           e.stopPropagation();
