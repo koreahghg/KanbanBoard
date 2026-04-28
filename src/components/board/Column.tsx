@@ -56,6 +56,7 @@ export default function Column({ column, cards, onDelete }: Props) {
             <Card
               key={card.id}
               card={card}
+              columnId={column.id}
               onDelete={() => deleteCard(column.id, card.id)}
               onEdit={(title, description) => updateCard(card.id, { title, description })}
             />

@@ -45,23 +45,17 @@ export default function BoardPage() {
     const cardId = active.id as string;
     const overId = over.id as string;
 
-    const sourceColumnId = Object.keys(columns).find((colId) =>
-      columns[colId].cardIds.includes(cardId),
-    );
+    const sourceColumnId = active.data.current?.columnId as string | undefined;
     if (!sourceColumnId) return;
 
     let destColumnId: string;
     let destIndex: number;
 
     if (overId in columns) {
-      // 빈 컬럼 위에 드롭
       destColumnId = overId;
       destIndex = columns[overId].cardIds.length;
     } else {
-      // 다른 카드 위에 드롭
-      const destColId = Object.keys(columns).find((colId) =>
-        columns[colId].cardIds.includes(overId),
-      );
+      const destColId = over.data.current?.columnId as string | undefined;
       if (!destColId) return;
       destColumnId = destColId;
       destIndex = columns[destColumnId].cardIds.indexOf(overId);

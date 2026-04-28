@@ -7,11 +7,12 @@ import { CSS } from '@dnd-kit/utilities';
 
 interface Props {
   card: CardType;
+  columnId: string;
   onDelete: () => void;
   onEdit: (title: string, description: string) => void;
 }
 
-export default function Card({ card, onDelete, onEdit }: Props) {
+export default function Card({ card, columnId, onDelete, onEdit }: Props) {
   const [isEditing, setIsEditing] = useState(false);
   const [editTitle, setEditTitle] = useState(card.title);
   const [editDescription, setEditDescription] = useState(card.description);
@@ -19,6 +20,7 @@ export default function Card({ card, onDelete, onEdit }: Props) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: card.id,
     disabled: isEditing,
+    data: { columnId },
   });
 
   const style = {
