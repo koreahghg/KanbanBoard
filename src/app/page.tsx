@@ -60,6 +60,7 @@ export default function BoardPage() {
       if (!destColId) return;
       destColumnId = destColId;
       destIndex = columns[destColumnId].cardIds.indexOf(overId);
+      if (destIndex === -1) return;
     }
 
     moveCard(cardId, sourceColumnId, destColumnId, destIndex);
