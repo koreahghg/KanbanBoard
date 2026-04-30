@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   DndContext,
   DragEndEvent,
@@ -27,6 +27,10 @@ export default function BoardPage() {
   const activeBoard = activeBoardId ? boards[activeBoardId] : null;
 
   const [activeCardId, setActiveCardId] = useState<string | null>(null);
+
+  useEffect(() => {
+    useBoardStore.persist.rehydrate();
+  }, []);
 
   const sensors = useSensors(
     useSensor(MouseSensor, { activationConstraint: { distance: 5 } }),
