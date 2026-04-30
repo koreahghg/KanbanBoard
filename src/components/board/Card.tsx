@@ -62,7 +62,11 @@ export default function Card({ card, columnId, onDelete, onEdit }: Props) {
 
   if (isEditing) {
     return (
-      <div ref={setNodeRef} style={style} className="flex flex-col gap-2 rounded-md bg-white p-3 shadow-sm">
+      <div
+        ref={setNodeRef}
+        style={style}
+        className="flex flex-col gap-2 rounded-md bg-white p-3 shadow-sm"
+      >
         <input
           autoFocus
           value={editTitle}
@@ -125,7 +129,7 @@ export default function Card({ card, columnId, onDelete, onEdit }: Props) {
           e.stopPropagation();
           onDelete();
         }}
-        className="absolute right-2 top-2 rounded p-0.5 text-gray-400 opacity-0 transition-opacity hover:text-red-500 group-hover:opacity-100"
+        className="absolute top-2 right-2 rounded p-0.5 text-gray-400 opacity-0 transition-opacity group-hover:opacity-100 hover:text-red-500"
         aria-label="카드 삭제"
       >
         <svg
