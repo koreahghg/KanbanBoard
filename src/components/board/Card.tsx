@@ -108,6 +108,7 @@ export default function Card({ card, columnId, onDelete, onEdit }: Props) {
     <div
       ref={setNodeRef}
       style={style}
+      suppressHydrationWarning
       {...attributes}
       {...listeners}
       role="button"
