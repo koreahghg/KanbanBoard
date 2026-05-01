@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   DndContext,
   DragEndEvent,
@@ -82,12 +82,12 @@ export default function BoardPage() {
     moveCard(cardId, sourceColumnId, destColumnId, destIndex);
   };
 
-  const handleOpenModal = (cardId: string) => {
+  const handleOpenModal = useCallback((cardId: string) => {
     if (didDragRef.current) return;
     setSelectedCardId(cardId);
-  };
+  }, []);
 
-  const handleCloseModal = () => setSelectedCardId(null);
+  const handleCloseModal = useCallback(() => setSelectedCardId(null), []);
 
   const activeCard = activeCardId ? cards[activeCardId] : null;
   const selectedCard = selectedCardId ? cards[selectedCardId] : null;
