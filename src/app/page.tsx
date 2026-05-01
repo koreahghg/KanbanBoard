@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   DndContext,
   DragEndEvent,
@@ -13,6 +13,7 @@ import {
 } from '@dnd-kit/core';
 import AddColumn from '@/components/board/AddColumn';
 import CardContent from '@/components/board/CardContent';
+import CardDetailModal from '@/components/board/CardDetailModal';
 import Column from '@/components/board/Column';
 import { useBoardStore } from '@/store/boardStore';
 
@@ -24,10 +25,13 @@ export default function BoardPage() {
   const addColumn = useBoardStore((state) => state.addColumn);
   const deleteColumn = useBoardStore((state) => state.deleteColumn);
   const moveCard = useBoardStore((state) => state.moveCard);
+  const updateCard = useBoardStore((state) => state.updateCard);
   const activeBoard = activeBoardId ? boards[activeBoardId] : null;
 
   const [activeCardId, setActiveCardId] = useState<string | null>(null);
+  const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
   const [isHydrated, setIsHydrated] = useState(false);
+  const didDragRef = useRef(false);
 
   useEffect(() => {
     useBoardStore.persist.rehydrate();
@@ -40,20 +44,24 @@ export default function BoardPage() {
   );
 
   if (!isHydrated) return null;
-
   if (!activeBoard || !activeBoardId) return null;
 
   const handleDragStart = ({ active }: DragStartEvent) => {
+    didDragRef.current = true;
     setActiveCardId(active.id as string);
   };
 
   const handleDragEnd = ({ active, over }: DragEndEvent) => {
     setActiveCardId(null);
+    // rAF 이후 리셋: click 이벤트가 먼저 처리된 뒤 플래그를 해제
+    requestAnimationFrame(() => {
+      didDragRef.current = false;
+    });
+
     if (!over || active.id === over.id) return;
 
     const cardId = active.id as string;
     const overId = over.id as string;
-
     const sourceColumnId = active.data.current?.columnId as string | undefined;
     if (!sourceColumnId) return;
 
@@ -74,7 +82,15 @@ export default function BoardPage() {
     moveCard(cardId, sourceColumnId, destColumnId, destIndex);
   };
 
+  const handleOpenModal = (cardId: string) => {
+    if (didDragRef.current) return;
+    setSelectedCardId(cardId);
+  };
+
+  const handleCloseModal = () => setSelectedCardId(null);
+
   const activeCard = activeCardId ? cards[activeCardId] : null;
+  const selectedCard = selectedCardId ? cards[selectedCardId] : null;
 
   return (
     <main className="flex h-full flex-col p-4">
@@ -90,6 +106,7 @@ export default function BoardPage() {
                 column={column}
                 cards={columnCards}
                 onDelete={() => deleteColumn(activeBoardId, columnId)}
+                onOpenModal={handleOpenModal}
               />
             );
           })}
@@ -103,6 +120,13 @@ export default function BoardPage() {
           ) : null}
         </DragOverlay>
       </DndContext>
+      {selectedCard && (
+        <CardDetailModal
+          card={selectedCard}
+          onClose={handleCloseModal}
+          onSave={(title, description) => updateCard(selectedCard.id, { title, description })}
+        />
+      )}
     </main>
   );
 }
