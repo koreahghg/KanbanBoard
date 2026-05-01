@@ -35,8 +35,10 @@ export default function CardDetailModal({ card, onClose, onSave }: Props) {
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
-      const isTextArea = (e.target as HTMLElement).tagName === 'TEXTAREA';
-      if (!isTextArea || e.metaKey || e.ctrlKey) {
+      const target = e.target as HTMLElement;
+      const isInput = target.tagName === 'INPUT';
+      const isTextArea = target.tagName === 'TEXTAREA';
+      if (isInput || (isTextArea && (e.metaKey || e.ctrlKey))) {
         e.preventDefault();
         handleSave();
       }
