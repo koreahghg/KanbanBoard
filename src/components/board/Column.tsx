@@ -11,11 +11,11 @@ interface Props {
   column: ColumnType;
   cards: CardType[];
   onDelete?: () => void;
+  onOpenModal: (cardId: string) => void;
 }
 
-export default function Column({ column, cards, onDelete }: Props) {
+export default function Column({ column, cards, onDelete, onOpenModal }: Props) {
   const addCard = useBoardStore((state) => state.addCard);
-  const updateCard = useBoardStore((state) => state.updateCard);
   const deleteCard = useBoardStore((state) => state.deleteCard);
 
   const { setNodeRef } = useDroppable({ id: column.id });
@@ -58,7 +58,7 @@ export default function Column({ column, cards, onDelete }: Props) {
               card={card}
               columnId={column.id}
               onDelete={() => deleteCard(column.id, card.id)}
-              onEdit={(title, description) => updateCard(card.id, { title, description })}
+              onOpenModal={() => onOpenModal(card.id)}
             />
           ))}
         </div>
