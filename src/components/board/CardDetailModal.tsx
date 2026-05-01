@@ -35,8 +35,10 @@ export default function CardDetailModal({ card, onClose, onSave }: Props) {
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
-      const isTextArea = (e.target as HTMLElement).tagName === 'TEXTAREA';
-      if (!isTextArea || e.metaKey || e.ctrlKey) {
+      const target = e.target as HTMLElement;
+      const isInput = target.tagName === 'INPUT';
+      const isTextArea = target.tagName === 'TEXTAREA';
+      if (isInput || (isTextArea && (e.metaKey || e.ctrlKey))) {
         e.preventDefault();
         handleSave();
       }
@@ -49,12 +51,15 @@ export default function CardDetailModal({ card, onClose, onSave }: Props) {
       onClick={onClose}
     >
       <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modal-title"
         className="w-full max-w-md rounded-xl bg-white p-6 shadow-2xl"
         onClick={(e) => e.stopPropagation()}
         onKeyDown={handleKeyDown}
       >
         <div className="mb-5 flex items-center justify-between">
-          <h2 className="text-base font-semibold text-gray-800">카드 상세</h2>
+          <h2 id="modal-title" className="text-base font-semibold text-gray-800">카드 상세</h2>
           <button
             onClick={onClose}
             className="rounded p-1 text-gray-400 hover:bg-neutral-100 hover:text-gray-600"
