@@ -43,6 +43,13 @@ export default function BoardPage() {
     useSensor(TouchSensor, { activationConstraint: { delay: 250, tolerance: 5 } }),
   );
 
+  const handleOpenModal = useCallback((cardId: string) => {
+    if (didDragRef.current) return;
+    setSelectedCardId(cardId);
+  }, []);
+
+  const handleCloseModal = useCallback(() => setSelectedCardId(null), []);
+
   if (!isHydrated) return null;
   if (!activeBoard || !activeBoardId) return null;
 
@@ -81,13 +88,6 @@ export default function BoardPage() {
 
     moveCard(cardId, sourceColumnId, destColumnId, destIndex);
   };
-
-  const handleOpenModal = useCallback((cardId: string) => {
-    if (didDragRef.current) return;
-    setSelectedCardId(cardId);
-  }, []);
-
-  const handleCloseModal = useCallback(() => setSelectedCardId(null), []);
 
   const activeCard = activeCardId ? cards[activeCardId] : null;
   const selectedCard = selectedCardId ? cards[selectedCardId] : null;
