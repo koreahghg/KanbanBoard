@@ -30,7 +30,7 @@ export default function Column({ column, cards, onDelete, onOpenModal }: Props) 
         {onDelete && (
           <button
             onClick={onDelete}
-            className="ml-1 rounded p-0.5 text-gray-400 opacity-0 transition-all group-hover:opacity-100 hover:bg-neutral-200 hover:text-red-500"
+            className="ml-1 rounded p-0.5 text-gray-400 opacity-0 transition-all group-hover:opacity-100 focus-visible:opacity-100 hover:bg-neutral-200 hover:text-red-500"
             aria-label="컬럼 삭제"
           >
             <svg
