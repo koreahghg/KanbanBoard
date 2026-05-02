@@ -114,7 +114,7 @@ export default function BoardPage() {
         </div>
         <DragOverlay>
           {activeCard ? (
-            <div className="w-64 rotate-1 cursor-grabbing rounded-md bg-white px-3 py-2 shadow-xl ring-2 ring-sky-400">
+            <div className="animate-card-pickup w-64 cursor-grabbing rounded-md bg-white px-3 py-2 shadow-xl ring-2 ring-sky-400">
               <CardContent card={activeCard} />
             </div>
           ) : null}
