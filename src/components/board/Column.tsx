@@ -21,7 +21,7 @@ export default function Column({ column, cards, onDelete, onOpenModal }: Props) 
   const { setNodeRef } = useDroppable({ id: column.id });
 
   return (
-    <div className="flex w-72 shrink-0 flex-col rounded-xl bg-neutral-100/90 p-2">
+    <div className="group flex w-72 shrink-0 flex-col rounded-xl bg-neutral-100/90 p-2">
       <div className="mb-2 flex items-center gap-2 px-1">
         <h2 className="flex-1 text-sm font-semibold text-gray-700">{column.title}</h2>
         <span className="rounded-full bg-neutral-300 px-1.5 py-0.5 text-xs font-medium text-gray-600">
@@ -30,7 +30,7 @@ export default function Column({ column, cards, onDelete, onOpenModal }: Props) 
         {onDelete && (
           <button
             onClick={onDelete}
-            className="ml-1 rounded p-0.5 text-gray-400 hover:bg-neutral-200 hover:text-red-500"
+            className="ml-1 rounded p-0.5 text-gray-400 opacity-0 transition-all group-hover:opacity-100 hover:bg-neutral-200 hover:text-red-500"
             aria-label="컬럼 삭제"
           >
             <svg

@@ -34,9 +34,24 @@ export default function AddCard({ onAdd }: Props) {
     return (
       <button
         onClick={() => setIsEditing(true)}
-        className="w-full rounded px-2 py-1.5 text-left text-sm text-neutral-500 transition-colors hover:bg-neutral-200 hover:text-neutral-700"
+        className="flex w-full items-center gap-1.5 rounded-lg px-2 py-1.5 text-left text-sm text-neutral-500 transition-colors hover:bg-neutral-200/80 hover:text-neutral-700"
       >
-        + 카드 추가
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="12"
+          height="12"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="shrink-0"
+        >
+          <line x1="12" y1="5" x2="12" y2="19" />
+          <line x1="5" y1="12" x2="19" y2="12" />
+        </svg>
+        카드 추가
       </button>
     );
   }
