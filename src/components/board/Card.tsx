@@ -55,7 +55,7 @@ export default function Card({ card, columnId, onDelete, onOpenModal }: Props) {
           onDelete();
         }}
         className={`absolute top-1.5 right-1.5 flex h-5 w-5 items-center justify-center rounded text-gray-400 transition-all hover:bg-red-50 hover:text-red-500 ${
-          isDragging ? 'hidden' : 'opacity-0 group-hover:opacity-100'
+          isDragging ? 'hidden' : 'opacity-0 group-hover:opacity-100 focus-visible:opacity-100'
         }`}
         aria-label="카드 삭제"
       >
