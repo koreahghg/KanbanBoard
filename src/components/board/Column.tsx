@@ -167,11 +167,9 @@ export default memo(function Column({ column, cards, onOpenModal }: Props) {
               onOpenModal={onOpenModal}
             />
           ))}
+          <AddCard onAdd={handleAddCard} />
         </div>
       </SortableContext>
-      <div className="mt-2">
-        <AddCard onAdd={handleAddCard} />
-      </div>
     </div>
   );
 });
