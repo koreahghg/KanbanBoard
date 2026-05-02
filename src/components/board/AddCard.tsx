@@ -1,39 +1,19 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useInlineEditor } from '@/hooks/useInlineEditor';
 
 interface Props {
   onAdd: (title: string) => void;
 }
 
 export default function AddCard({ onAdd }: Props) {
-  const [isEditing, setIsEditing] = useState(false);
-  const [title, setTitle] = useState('');
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    if (isEditing) inputRef.current?.focus();
-  }, [isEditing]);
-
-  const handleSubmit = () => {
-    const trimmed = title.trim();
-    if (trimmed) onAdd(trimmed);
-    setTitle('');
-    setIsEditing(false);
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') handleSubmit();
-    if (e.key === 'Escape') {
-      setTitle('');
-      setIsEditing(false);
-    }
-  };
+  const { isEditing, title, inputRef, setTitle, handleSubmit, handleKeyDown, startEditing, cancelEditing } =
+    useInlineEditor(onAdd);
 
   if (!isEditing) {
     return (
       <button
-        onClick={() => setIsEditing(true)}
+        onClick={startEditing}
         className="flex w-full items-center gap-1.5 rounded-lg px-2 py-1.5 text-left text-sm text-neutral-500 transition-colors hover:bg-neutral-200/80 hover:text-neutral-700"
       >
         <svg
@@ -76,10 +56,7 @@ export default function AddCard({ onAdd }: Props) {
           추가
         </button>
         <button
-          onClick={() => {
-            setTitle('');
-            setIsEditing(false);
-          }}
+          onClick={cancelEditing}
           className="flex-1 rounded-lg bg-neutral-200 py-1.5 text-sm font-medium text-gray-700 hover:bg-neutral-300"
         >
           취소
