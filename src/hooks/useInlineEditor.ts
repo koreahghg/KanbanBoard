@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 export function useInlineEditor(onAdd: (title: string) => void) {
   const [isEditing, setIsEditing] = useState(false);
@@ -9,20 +9,30 @@ export function useInlineEditor(onAdd: (title: string) => void) {
     if (isEditing) inputRef.current?.focus();
   }, [isEditing]);
 
-  const handleSubmit = () => {
+  const handleSubmit = useCallback(() => {
     const trimmed = title.trim();
     if (trimmed) onAdd(trimmed);
     setTitle('');
     setIsEditing(false);
-  };
+  }, [title, onAdd]);
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') handleSubmit();
-    if (e.key === 'Escape') {
-      setTitle('');
-      setIsEditing(false);
-    }
-  };
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLInputElement>) => {
+      if (e.key === 'Enter') handleSubmit();
+      if (e.key === 'Escape') {
+        setTitle('');
+        setIsEditing(false);
+      }
+    },
+    [handleSubmit],
+  );
+
+  const startEditing = useCallback(() => setIsEditing(true), []);
+
+  const cancelEditing = useCallback(() => {
+    setTitle('');
+    setIsEditing(false);
+  }, []);
 
   return {
     isEditing,
@@ -31,10 +41,7 @@ export function useInlineEditor(onAdd: (title: string) => void) {
     setTitle,
     handleSubmit,
     handleKeyDown,
-    startEditing: () => setIsEditing(true),
-    cancelEditing: () => {
-      setTitle('');
-      setIsEditing(false);
-    },
+    startEditing,
+    cancelEditing,
   };
 }
