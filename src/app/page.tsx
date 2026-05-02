@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   DndContext,
   DragEndEvent,
@@ -23,7 +23,6 @@ export default function BoardPage() {
   const columns = useBoardStore((state) => state.columns);
   const cards = useBoardStore((state) => state.cards);
   const addColumn = useBoardStore((state) => state.addColumn);
-  const deleteColumn = useBoardStore((state) => state.deleteColumn);
   const moveCard = useBoardStore((state) => state.moveCard);
   const updateCard = useBoardStore((state) => state.updateCard);
   const activeBoard = activeBoardId ? boards[activeBoardId] : null;
@@ -32,6 +31,12 @@ export default function BoardPage() {
   const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
   const [isHydrated, setIsHydrated] = useState(false);
   const didDragRef = useRef(false);
+
+  // columns를 ref로 캐싱해 handleDragEnd deps를 안정화
+  const columnsRef = useRef(columns);
+  useEffect(() => {
+    columnsRef.current = columns;
+  }, [columns]);
 
   useEffect(() => {
     useBoardStore.persist.rehydrate();
@@ -50,44 +55,76 @@ export default function BoardPage() {
 
   const handleCloseModal = useCallback(() => setSelectedCardId(null), []);
 
-  if (!isHydrated) return null;
-  if (!activeBoard || !activeBoardId) return null;
+  const handleAddColumn = useCallback(
+    (title: string) => {
+      if (activeBoardId) addColumn(activeBoardId, title);
+    },
+    [addColumn, activeBoardId],
+  );
 
-  const handleDragStart = ({ active }: DragStartEvent) => {
+  const handleSaveCard = useCallback(
+    (title: string, description: string) => {
+      if (selectedCardId) updateCard(selectedCardId, { title, description });
+    },
+    [selectedCardId, updateCard],
+  );
+
+  const handleDragStart = useCallback(({ active }: DragStartEvent) => {
     didDragRef.current = true;
     setActiveCardId(active.id as string);
-  };
+  }, []);
 
-  const handleDragEnd = ({ active, over }: DragEndEvent) => {
-    setActiveCardId(null);
-    // rAF 이후 리셋: click 이벤트가 먼저 처리된 뒤 플래그를 해제
-    requestAnimationFrame(() => {
-      didDragRef.current = false;
-    });
+  const handleDragEnd = useCallback(
+    ({ active, over }: DragEndEvent) => {
+      setActiveCardId(null);
+      // rAF 이후 리셋: click 이벤트가 먼저 처리된 뒤 플래그를 해제
+      requestAnimationFrame(() => {
+        didDragRef.current = false;
+      });
 
-    if (!over || active.id === over.id) return;
+      if (!over || active.id === over.id) return;
 
-    const cardId = active.id as string;
-    const overId = over.id as string;
-    const sourceColumnId = active.data.current?.columnId as string | undefined;
-    if (!sourceColumnId) return;
+      const cardId = active.id as string;
+      const overId = over.id as string;
+      const sourceColumnId = active.data.current?.columnId as string | undefined;
+      if (!sourceColumnId) return;
 
-    let destColumnId: string;
-    let destIndex: number;
+      const cols = columnsRef.current;
+      let destColumnId: string;
+      let destIndex: number;
 
-    if (overId in columns) {
-      destColumnId = overId;
-      destIndex = columns[overId].cardIds.length;
-    } else {
-      const destColId = over.data.current?.columnId as string | undefined;
-      if (!destColId) return;
-      destColumnId = destColId;
-      destIndex = columns[destColumnId].cardIds.indexOf(overId);
-      if (destIndex === -1) return;
-    }
+      if (overId in cols) {
+        destColumnId = overId;
+        destIndex = cols[overId].cardIds.length;
+      } else {
+        const destColId = over.data.current?.columnId as string | undefined;
+        if (!destColId) return;
+        destColumnId = destColId;
+        destIndex = cols[destColumnId].cardIds.indexOf(overId);
+        if (destIndex === -1) return;
+      }
 
-    moveCard(cardId, sourceColumnId, destColumnId, destIndex);
-  };
+      moveCard(cardId, sourceColumnId, destColumnId, destIndex);
+    },
+    [moveCard],
+  );
+
+  const columnData = useMemo(() => {
+    if (!activeBoard) return [];
+    return activeBoard.columnIds.reduce<{ column: (typeof columns)[string]; columnCards: (typeof cards)[string][] }[]>(
+      (acc, columnId) => {
+        const column = columns[columnId];
+        if (!column) return acc;
+        const columnCards = column.cardIds.map((cardId) => cards[cardId]).filter(Boolean);
+        acc.push({ column, columnCards });
+        return acc;
+      },
+      [],
+    );
+  }, [activeBoard, columns, cards]);
+
+  if (!isHydrated) return null;
+  if (!activeBoard || !activeBoardId) return null;
 
   const activeCard = activeCardId ? cards[activeCardId] : null;
   const selectedCard = selectedCardId ? cards[selectedCardId] : null;
@@ -97,20 +134,15 @@ export default function BoardPage() {
       <h1 className="mb-4 text-xl font-bold text-white">{activeBoard.title}</h1>
       <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
         <div className="flex items-start gap-3 overflow-x-auto pb-4">
-          {activeBoard.columnIds.map((columnId) => {
-            const column = columns[columnId];
-            const columnCards = column.cardIds.map((cardId) => cards[cardId]);
-            return (
-              <Column
-                key={columnId}
-                column={column}
-                cards={columnCards}
-                onDelete={() => deleteColumn(activeBoardId, columnId)}
-                onOpenModal={handleOpenModal}
-              />
-            );
-          })}
-          <AddColumn onAdd={(title) => addColumn(activeBoardId, title)} />
+          {columnData.map(({ column, columnCards }) => (
+            <Column
+              key={column.id}
+              column={column}
+              cards={columnCards}
+              onOpenModal={handleOpenModal}
+            />
+          ))}
+          <AddColumn onAdd={handleAddColumn} />
         </div>
         <DragOverlay>
           {activeCard ? (
@@ -124,7 +156,7 @@ export default function BoardPage() {
         <CardDetailModal
           card={selectedCard}
           onClose={handleCloseModal}
-          onSave={(title, description) => updateCard(selectedCard.id, { title, description })}
+          onSave={handleSaveCard}
         />
       )}
     </main>
