@@ -34,7 +34,9 @@ export default function BoardPage() {
 
   // columns를 ref로 캐싱해 handleDragEnd deps를 안정화
   const columnsRef = useRef(columns);
-  columnsRef.current = columns;
+  useEffect(() => {
+    columnsRef.current = columns;
+  }, [columns]);
 
   useEffect(() => {
     useBoardStore.persist.rehydrate();
