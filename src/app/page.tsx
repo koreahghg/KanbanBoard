@@ -111,11 +111,16 @@ export default function BoardPage() {
 
   const columnData = useMemo(() => {
     if (!activeBoard) return [];
-    return activeBoard.columnIds.map((columnId) => {
-      const column = columns[columnId];
-      const columnCards = column.cardIds.map((cardId) => cards[cardId]);
-      return { column, columnCards };
-    });
+    return activeBoard.columnIds.reduce<{ column: (typeof columns)[string]; columnCards: (typeof cards)[string][] }[]>(
+      (acc, columnId) => {
+        const column = columns[columnId];
+        if (!column) return acc;
+        const columnCards = column.cardIds.map((cardId) => cards[cardId]).filter(Boolean);
+        acc.push({ column, columnCards });
+        return acc;
+      },
+      [],
+    );
   }, [activeBoard, columns, cards]);
 
   if (!isHydrated) return null;
