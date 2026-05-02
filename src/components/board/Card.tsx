@@ -1,5 +1,6 @@
 'use client';
 
+import { memo, useCallback } from 'react';
 import type { Card as CardType } from '@/types';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
@@ -8,11 +9,11 @@ import CardContent from './CardContent';
 interface Props {
   card: CardType;
   columnId: string;
-  onDelete: () => void;
-  onOpenModal: () => void;
+  onDelete: (cardId: string) => void;
+  onOpenModal: (cardId: string) => void;
 }
 
-export default function Card({ card, columnId, onDelete, onOpenModal }: Props) {
+export default memo(function Card({ card, columnId, onDelete, onOpenModal }: Props) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: card.id,
     data: { columnId },
@@ -23,6 +24,26 @@ export default function Card({ card, columnId, onDelete, onOpenModal }: Props) {
     transition,
   };
 
+  const handleClick = useCallback(() => onOpenModal(card.id), [onOpenModal, card.id]);
+
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        onOpenModal(card.id);
+      }
+    },
+    [onOpenModal, card.id],
+  );
+
+  const handleDelete = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation();
+      onDelete(card.id);
+    },
+    [onDelete, card.id],
+  );
+
   return (
     <div
       ref={setNodeRef}
@@ -31,13 +52,8 @@ export default function Card({ card, columnId, onDelete, onOpenModal }: Props) {
       {...listeners}
       role="button"
       tabIndex={0}
-      onClick={onOpenModal}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          onOpenModal();
-        }
-      }}
+      onClick={handleClick}
+      onKeyDown={handleKeyDown}
       className={`group relative cursor-grab rounded-md px-3 py-2 transition-shadow active:cursor-grabbing ${
         isDragging
           ? 'border-2 border-dashed border-sky-200 bg-sky-50/40 shadow-none'
@@ -50,10 +66,7 @@ export default function Card({ card, columnId, onDelete, onOpenModal }: Props) {
         <CardContent card={card} />
       </div>
       <button
-        onClick={(e) => {
-          e.stopPropagation();
-          onDelete();
-        }}
+        onClick={handleDelete}
         className={`absolute top-1.5 right-1.5 flex h-5 w-5 items-center justify-center rounded text-gray-400 transition-all hover:bg-red-50 hover:text-red-500 ${
           isDragging ? 'hidden' : 'opacity-0 group-hover:opacity-100 focus-visible:opacity-100'
         }`}
@@ -76,4 +89,4 @@ export default function Card({ card, columnId, onDelete, onOpenModal }: Props) {
       </button>
     </div>
   );
-}
+});
