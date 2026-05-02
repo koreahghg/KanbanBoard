@@ -38,17 +38,23 @@ export default function Card({ card, columnId, onDelete, onOpenModal }: Props) {
           onOpenModal();
         }
       }}
-      className={`group relative cursor-grab rounded-md bg-white px-3 py-2 shadow-sm transition-shadow active:cursor-grabbing ${
-        isDragging ? 'opacity-0' : 'hover:shadow-md'
+      className={`group relative cursor-grab rounded-md px-3 py-2 transition-all duration-150 active:cursor-grabbing ${
+        isDragging
+          ? 'border-2 border-dashed border-sky-200 bg-sky-50/40 shadow-none'
+          : 'bg-white shadow-sm hover:-translate-y-0.5 hover:shadow-md'
       }`}
     >
-      <CardContent card={card} />
+      <div className={isDragging ? 'opacity-0' : undefined}>
+        <CardContent card={card} />
+      </div>
       <button
         onClick={(e) => {
           e.stopPropagation();
           onDelete();
         }}
-        className="absolute top-2 right-2 rounded p-0.5 text-gray-400 opacity-0 transition-opacity group-hover:opacity-100 hover:text-red-500"
+        className={`absolute top-1.5 right-1.5 flex h-5 w-5 items-center justify-center rounded text-gray-400 transition-all hover:bg-red-50 hover:text-red-500 ${
+          isDragging ? 'hidden' : 'opacity-0 group-hover:opacity-100'
+        }`}
         aria-label="카드 삭제"
       >
         <svg
