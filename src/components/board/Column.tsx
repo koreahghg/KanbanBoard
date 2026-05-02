@@ -149,12 +149,12 @@ export default memo(function Column({ column, cards, onOpenModal }: Props) {
       <SortableContext items={cardIds} strategy={verticalListSortingStrategy}>
         <div
           ref={setNodeRef}
-          className={`flex min-h-25 flex-1 flex-col gap-2 rounded-lg transition-colors ${
+          className={`flex flex-col gap-2 rounded-lg transition-colors ${
             isOver ? 'bg-sky-100/60 ring-2 ring-dashed ring-sky-300' : ''
           }`}
         >
           {cards.length === 0 && (
-            <div className="flex flex-1 items-center justify-center py-4 text-xs text-neutral-400 select-none">
+            <div className="flex items-center justify-center py-3 text-xs text-neutral-400 select-none">
               {isOver ? '여기에 놓기' : '카드를 드래그해서 이동'}
             </div>
           )}
