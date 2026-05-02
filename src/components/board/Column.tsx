@@ -149,7 +149,7 @@ export default memo(function Column({ column, cards, onOpenModal }: Props) {
       <SortableContext items={cardIds} strategy={verticalListSortingStrategy}>
         <div
           ref={setNodeRef}
-          className={`flex flex-col gap-2 rounded-lg transition-colors ${
+          className={`flex min-h-25 flex-1 flex-col gap-2 rounded-lg transition-colors ${
             isOver ? 'bg-sky-100/60 ring-2 ring-dashed ring-sky-300' : ''
           }`}
         >
