@@ -38,13 +38,15 @@ export default function Card({ card, columnId, onDelete, onOpenModal }: Props) {
           onOpenModal();
         }
       }}
-      className={`group relative cursor-grab rounded-md px-3 py-2 transition-all duration-150 active:cursor-grabbing ${
+      className={`group relative cursor-grab rounded-md px-3 py-2 transition-shadow active:cursor-grabbing ${
         isDragging
           ? 'border-2 border-dashed border-sky-200 bg-sky-50/40 shadow-none'
-          : 'bg-white shadow-sm hover:-translate-y-0.5 hover:shadow-md'
+          : 'bg-white shadow-sm hover:shadow-md'
       }`}
     >
-      <div className={isDragging ? 'opacity-0' : undefined}>
+      <div
+        className={`transition-transform duration-150 ${isDragging ? 'opacity-0' : 'group-hover:-translate-y-0.5'}`}
+      >
         <CardContent card={card} />
       </div>
       <button
