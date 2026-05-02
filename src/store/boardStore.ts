@@ -9,6 +9,7 @@ interface BoardActions {
   updateCard: (cardId: CardId, updates: Partial<Pick<Card, 'title' | 'description'>>) => void;
   deleteCard: (columnId: ColumnId, cardId: CardId) => void;
   addColumn: (boardId: BoardId, title: string) => void;
+  updateColumn: (columnId: ColumnId, title: string) => void;
   deleteColumn: (boardId: BoardId, columnId: ColumnId) => void;
   moveCard: (cardId: CardId, sourceColumnId: ColumnId, destColumnId: ColumnId, destIndex: number) => void;
 }
@@ -54,6 +55,14 @@ export const useBoardStore = create<BoardState & BoardActions>()(
               ...state.columns[columnId],
               cardIds: state.columns[columnId].cardIds.filter((id) => id !== cardId),
             },
+          },
+        })),
+
+      updateColumn: (columnId, title) =>
+        set((state) => ({
+          columns: {
+            ...state.columns,
+            [columnId]: { ...state.columns[columnId], title },
           },
         })),
 
